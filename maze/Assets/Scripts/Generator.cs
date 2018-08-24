@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//генератор лабиринта
+
 public class Generator : MonoBehaviour {
 
-    public int num = 1;//номер комнаты
+    public int num = 1;//номер лабиринта
     public int height = 4,width = 4; //массив комнат
     private GameObject maze; //дочерний объект
     private Room[,] rooms = new Room[4,4];//комнаты лабиринта
