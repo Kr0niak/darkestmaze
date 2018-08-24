@@ -21,8 +21,23 @@ public class Generator : MonoBehaviour {
                 float fX = i * height; //координата клетки x
                 float fZ = j * width; //координата клетки z
                 rooms[i, j] = new Room();
-                rooms[i, j].drawRoom(fX, 0.0f, fZ);
-                //rooms[i, j].transform.parent = maze.transform;
+                rooms[i, j].x = fX;
+                rooms[i, j].y = 0.0f;
+                rooms[i, j].z = fZ;
+                rooms[i, j].num = Random.Range(1, 10); 
+                //генерируем разные комнаты
+                Debug.Log(rooms[i, j].num.ToString());
+                if (rooms[i, j].num >= 1 && rooms[i, j].num <= 4)
+                        {
+                            rooms[i, j].prefab = "Room";
+                            //Debug.Log(rooms[i, j].prefab.ToString());
+                        }
+                else if(rooms[i, j].num >=5 && rooms[i, j].num <= 9)
+                        {
+                            rooms[i, j].prefab = "Room_1";
+                            //Debug.Log(rooms[i, j].prefab.ToString());
+                        }
+                GameObject maze = Instantiate(Resources.Load(rooms[i, j].prefab), new Vector3(rooms[i, j].x, rooms[i, j].y, rooms[i, j].z), Quaternion.identity) as GameObject;
             }
         }
     }
