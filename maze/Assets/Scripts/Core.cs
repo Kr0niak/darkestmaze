@@ -1,37 +1,68 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class Core : MonoBehaviour {
-    //Главный класс нашей игры
-    // Use this for initialization
-    public int num = 1; // какая сцена грузится
-    /* 0 - меню 
-     * 1 - игра
-     * 2 - рейтинг игроков
-     * 3 - конец игры
-     * */
-    public Generator maze;
+namespace DarkestMaze
+{
+    /// <summary>
+    /// Ядро программы. Основной класс в игре
+    /// </summary>
+    public class Core : MonoBehaviour
+    {
+        /// <summary>
+        /// Единственный экземпляр класса
+        /// </summary>
+        public static Core Instance;
+        /// <summary>
+        /// Генератор лабиринта
+        /// </summary>
+        private Generator _maze;
 
-    public bool game = false;//статус игры
+        /// <summary>
+        /// Номер активной в данный момент сцены
+        /// </summary>
+        public int ActiveSceneNumber { get; private set; }
+        /* 0 - меню 
+         * 1 - игра
+         * 2 - рейтинг игроков
+         * 3 - конец игры
+         */
+        /// <summary>
+        /// Флаг состояния активности игры
+        /// </summary>
+        public bool GameInProgress { get; private set; }
+        /// <summary>
+        /// Скриптуемый объект класса настроек игры
+        /// </summary>
+        public GameConfig GameConfig { get; private set; }
 
-    public int complexity = 1; //сложность игры
-    /*
-     * 1 - легкий уровень
-     * 2 - средний уровень
-     * 3 - тяжелый уровень
-     * */
+        /// <summary>
+        /// Загрузка сцены
+        /// </summary>
+        /// <param name="sceneIndex">Номер сцены в билде</param>
+        public void LoadScene(int sceneIndex)
+        {
+            SceneManager.LoadScene(sceneIndex);
+            ActiveSceneNumber = sceneIndex;
+        }
 
+        private void Awake()
+        {
+            DontDestroyOnLoad(gameObject);
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else
+            {
+                Debug.LogWarning("Экземпляр класса-ядра уже существует!", gameObject);
+            }
 
-    //Данные о пользователе будут посже
-    void Start () {
-        maze = new Generator();
-        maze.generateMaze();
+            GameConfig = Config.Instance.GameConfig;
+
+            _maze = new Generator();
+            _maze.GenerateMaze();
+        }
     }
-	
-	// Update is called once per frame
-	/*void Update () {
-		
-	}*/
-
 }

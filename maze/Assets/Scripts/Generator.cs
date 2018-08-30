@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using DarkestMaze;
+using UnityEngine;
 
 //генератор лабиринта компонент
 
@@ -9,7 +10,7 @@ public class Generator : MonoBehaviour {
     private GameObject maze; //дочерний объект
     private Room[,] rooms = new Room[4,4];//комнаты лабиринта
 
-    public void generateMaze() //Генерация лабиринта
+    public void GenerateMaze() //Генерация лабиринта
     {
         maze = new GameObject();
         for (int i = 0; i <= height - 1; i++)
@@ -19,55 +20,55 @@ public class Generator : MonoBehaviour {
                 float fX = i * height; 
                 float fZ = j * width; 
 
-                rooms[i, j] = new Room();
-                rooms[i, j].x = fX;
-                rooms[i, j].y = 0.0f;
-                rooms[i, j].z = fZ;
+                rooms[i, j] = new Room(Config.Instance.RoomConfig);
+                rooms[i, j].X = fX;
+                rooms[i, j].Y = 0.0f;
+                rooms[i, j].Z = fZ;
                 rooms[i, j].num = Random.Range(1, 10); 
 
                 //генерируем разные комнаты
                 if (rooms[i, j].num >= 1 && rooms[i, j].num <= 4)
                 {
-                    rooms[i, j].prefab = "Floor_A";
+                    rooms[i, j].Prefab = "Floor_A";
                 }
                 else if(rooms[i, j].num >=5 && rooms[i, j].num <= 9)
                 {
-                    rooms[i, j].prefab = "Floor_B";
+                    rooms[i, j].Prefab = "Floor_B";
                 }
 
                 //пол
-                GameObject maze = objectLabirint(rooms[i, j].prefab, rooms[i, j].x, rooms[i, j].y, rooms[i, j].z, 0);
+                GameObject maze = objectLabirint(rooms[i, j].Prefab, rooms[i, j].X, rooms[i, j].Y, rooms[i, j].Z, 0);
 
                 //генерируем стены
                 if (i == 0)
                 {
-                    GameObject wallI = objectLabirint("Wall_C", rooms[i, j].x - (0.68f * 2) - 0.4f, 0.0f, rooms[i, j].z,0);  
+                    GameObject wallI = objectLabirint("Wall_C", rooms[i, j].X - (0.68f * 2) - 0.4f, 0.0f, rooms[i, j].Z,0);  
                 }
 
                 if (i == width - 1)
                 {
-                    GameObject wallI = objectLabirint("Wall_C", rooms[i, j].x + (0.68f * 2) + 0.4f, 0.0f, rooms[i, j].z, 0);
+                    GameObject wallI = objectLabirint("Wall_C", rooms[i, j].X + (0.68f * 2) + 0.4f, 0.0f, rooms[i, j].Z, 0);
                 }
 
                 if (j == 0)
                 {
-                    GameObject wallJ= objectLabirint("Wall_C", rooms[i, j].x, 0.0f, rooms[i, j].z - (0.68f * 2) - 0.4f, 90);
+                    GameObject wallJ= objectLabirint("Wall_C", rooms[i, j].X, 0.0f, rooms[i, j].Z - (0.68f * 2) - 0.4f, 90);
                 }
 
                 if (j == height - 1)
                 {
-                    GameObject wallJ = objectLabirint("Wall_C", rooms[i, j].x, 0.0f, rooms[i, j].z + (0.68f * 2) + 0.4f, 90);
+                    GameObject wallJ = objectLabirint("Wall_C", rooms[i, j].X, 0.0f, rooms[i, j].Z + (0.68f * 2) + 0.4f, 90);
                 }
 
                 
                 if (i > 0 || i < width - 1 || j == 0)
                 {
-                    GameObject wallV = objectLabirint("Doorway_C", rooms[i, j].x - (0.68f * 2) - 0.4f, 0.0f, rooms[i, j].z, 0);
+                    GameObject wallV = objectLabirint("Doorway_C", rooms[i, j].X - (0.68f * 2) - 0.4f, 0.0f, rooms[i, j].Z, 0);
                 }
 
                 if (j > 0 || j < height - 1 || i == 0)
                 {
-                    GameObject wallV = objectLabirint("Doorway_C", rooms[i, j].x, 0.0f, rooms[i, j].z - (0.68f * 2) - 0.4f, 90);
+                    GameObject wallV = objectLabirint("Doorway_C", rooms[i, j].X, 0.0f, rooms[i, j].Z - (0.68f * 2) - 0.4f, 90);
                 }
 
 

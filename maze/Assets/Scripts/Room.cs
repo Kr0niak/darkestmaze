@@ -2,30 +2,45 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//генерация комнаты
-public class Room : Object {
-    private float height = 1.0f, width = 1.0f, length = 1.0f; //ширина / высота /длинна комнаты
-
-    public int num = 1;// Какую комнату грузить по номерам (вроде договорились 10 комнат) пока будет 2
-
-    public int point = 5;//сколько точек генерации предметов в комнате 
-
-    public int generatePoint = 0; //количество гененируемых предметов
-
-    private Subject[] subjects;
-
-    public void generateSubject() // сколько всего предметов будет генерироваться
+namespace DarkestMaze
+{
+    /// <summary>
+    /// Комната
+    /// </summary>
+    public class Room : MazeObject
     {
-        generatePoint = Random.Range(0, point);
-    }
-	public void paramRoom(float px,float py, float pz) // рисование | генерирование комнаты
-    {
-        subjects = new Subject[generatePoint];
-        //заполняем массив данными о предметах
-        for (int i = 0; i<= point-1; i++)
+        /// <summary>
+        /// Настройки комнаты
+        /// </summary>
+        public RoomConfig RoomConfig { get; private set; }
+
+        public int num;
+
+        /// <summary>
+        /// Список предметов для взаимодействия в комнате
+        /// </summary>
+        public readonly List<Item> items = new List<Item>();
+
+        public Room(RoomConfig roomConfig)
         {
-            subjects[i].createSubject( 0, 0, 0, "Subject");
+            RoomConfig = roomConfig;
         }
 
+        /// <summary>
+        /// Попытка добавления предмета в комнату
+        /// </summary>
+        /// <param name="item">Предмет для взаимодействия</param>
+        /// <returns></returns>
+        public bool TryAddItem(Item item)
+        {
+            if (items.Count >= RoomConfig.MaxItems)
+            {
+                return false;
+            }
+            
+            items.Add(item);
+
+            return true;
+        }
     }
 }
