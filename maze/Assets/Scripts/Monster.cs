@@ -23,7 +23,7 @@ public class Monster : MonoBehaviour {
     private float _roomTargetX; // коор-ты для перемещения в рандомную комнату
     private float _roomTargetZ;
 
-    private Generator _generator = new Generator(); // для того, чтобы узнать длину и ширину комнаты
+   // private Generator _generator = new Generator(); // для того, чтобы узнать длину и ширину комнаты
 
     protected void Awake()
     {
@@ -68,12 +68,12 @@ public class Monster : MonoBehaviour {
 
         if (_time >= timeToRandomRoom) 
         {
-            _roomTargetX = Random.Range(0, countRooms) * _generator.height; // считаем координаты для рандомной комнаты
+           /* _roomTargetX = Random.Range(0, countRooms) * _generator.height; // считаем координаты для рандомной комнаты
             _roomTargetZ = Random.Range(0, countRooms) * _generator.width;
 
             _agent.ResetPath(); // делаем ресет, чтобы он стоял там где его поставили
             _agent.transform.position = new Vector3(_roomTargetX, 0, _roomTargetZ); // перемещаем монстра
-            _time = 0; 
+            _time = 0; */
         }
     }
 

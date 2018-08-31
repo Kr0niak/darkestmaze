@@ -59,9 +59,9 @@ namespace DarkestMaze
                 Debug.LogWarning("Экземпляр класса-ядра уже существует!", gameObject);
             }
 
-            GameConfig = Config.Instance.GameConfig;
+           // GameConfig = Config.Instance.GameConfig;
 
-            _maze = new Generator();
+            _maze = new Generator(4,4,4);
             _maze.GenerateMaze();
         }
     }
