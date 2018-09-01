@@ -108,5 +108,6 @@ public class Generator
     private void ObjectLabirint(string prefab = "", Vector3 pos = default(Vector3), int rotate = 0)
     {
         GameObject.Instantiate(Resources.Load(prefab), new Vector3(pos.x, pos.y, pos.z), Quaternion.Euler(0, rotate, 0), _rootMaze);
+
     }
 }
