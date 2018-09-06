@@ -12,7 +12,8 @@ namespace DarkestMaze
         /// <summary>
         /// Время работы фонарика
         /// </summary>
-        private float WorkTime = 0;
+       // [HideInInspector]
+        public float WorkTime = 0;
         /// <summary>
         /// Максимальное время работы фонарика
         /// </summary>
@@ -41,6 +42,7 @@ namespace DarkestMaze
                 Off();
             else
             {
+                On(); // включаем на тот случай, если фонарик уже выключился, но игрок смог поднять батарейку
                 WorkTime += _deltaTime; // увеличиваем текщее время работы
 
                 if (WorkTime >= MaxWorkTime - MaxWorkTime * 0.1f
