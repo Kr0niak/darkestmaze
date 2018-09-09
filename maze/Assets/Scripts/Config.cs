@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using DarkestMaze.Services;
 using UnityEngine;
 
 namespace DarkestMaze
@@ -8,37 +9,36 @@ namespace DarkestMaze
     /// Класс, представляющий все настройки в игре
     /// </summary>
     [DefaultExecutionOrder(-1)]
-    public class Config : MonoBehaviour
+    public class Config : Singleton<Config>
     {
         /// <summary>
-        /// Скриптуемый объект класса настроек игрока
+        /// Конфигурация поведения игрока
         /// </summary>
         public PlayerConfig PlayerConfig;
+
         /// <summary>
-        /// Скриптуемый объект класса настроек игры
-        /// </summary>
-        public GameConfig GameConfig;
-        /// <summary>
-        /// Скриптуемый объект класса настроек комнаты
+        /// Конфигурация комнаты
         /// </summary>
         public RoomConfig RoomConfig;
 
         /// <summary>
-        /// Единственный экземпляр класса
+        /// Список уровней сложности игры
         /// </summary>
-        public static Config Instance;
+        public List<DifficultyLevel> DifficultyLevels;
 
-        void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Debug.LogWarning("Экземпляр класса с настройками уже существует!", gameObject);
-            }
-        }
+        /// <summary>
+        /// Конфигурация главного меню игры
+        /// </summary>
+        public MenuConfig MainMenu;
+
+        /// <summary>
+        /// Конфигурация меню опций игры
+        /// </summary>
+        public MenuConfig OptionsMenu;
+
+        /// <summary>
+        /// Конфигурация меню паузы игры
+        /// </summary>
+        public MenuConfig PauseMenu;
     }
 }

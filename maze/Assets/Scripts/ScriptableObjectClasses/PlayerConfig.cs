@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DarkestMaze
 {
     /// <summary>
-    /// Обьекты этого класса хранят информацию о настройках поведения игрока
+    /// Информация о настройках поведения игрока
     /// </summary>
     [CreateAssetMenu(menuName = "Config/Player")]
     public class PlayerConfig : ScriptableObject

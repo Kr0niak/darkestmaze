@@ -6,7 +6,7 @@ using UnityEngine;
 namespace DarkestMaze
 {
     /// <summary>
-    /// Обьекты этого класса хранят информацию о настройках комнаты
+    /// Информация о настройках комнаты
     /// </summary>
     [CreateAssetMenu(menuName = "Config/Room")]
     public class RoomConfig : ScriptableObject

@@ -9,8 +9,19 @@ namespace DarkestMaze
     /// </summary>
     public enum DifficultyLevel
     {
-        Easy = 1,
-        Normal = 2,
-        Hard = 3
+        /// <summary>
+        /// Легкий уровень сложности
+        /// </summary>
+        Easy = 0,
+
+        /// <summary>
+        /// Нормальный уровень сложности
+        /// </summary>
+        Normal = 1,
+
+        /// <summary>
+        /// Тяжелый уровень сложности
+        /// </summary>
+        Hard = 2
     }
 }

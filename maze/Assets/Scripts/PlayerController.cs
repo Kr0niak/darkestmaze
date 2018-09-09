@@ -1,12 +1,25 @@
-﻿using UnityEngine;
+﻿using DarkestMaze.Interfaces;
+using DarkestMaze.Services;
+using UnityEngine;
 
 namespace DarkestMaze
 {
     /// <summary>
     /// Контроллер игрока
     /// </summary>
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : MonoBehaviour, ISubscribe
     {
+        /// <summary>
+        /// Состояние доступности курсора
+        /// </summary>
+        private CursorLockMode CursorLock
+        {
+            get { return Cursor.lockState; }
+            set { Cursor.lockState = value; }
+        }
+
+        private GameObject _player;
+
         /// <summary>
         /// Настройки игрока
         /// </summary>
@@ -45,8 +58,10 @@ namespace DarkestMaze
         {
             PlayerConfig = Config.Instance.PlayerConfig;
 
-            Cursor.lockState = CursorLockMode.Locked; // закрепляем курсор
-            _plCamera = GetComponentInChildren<Camera>(); // находим камеру
+            _player = GameObject.FindGameObjectWithTag("Player");
+
+            CursorLock = CursorLockMode.Locked; // закрепляем курсор
+            _plCamera = _player.GetComponentInChildren<Camera>(); // находим камеру
 
             _speed = PlayerConfig.NormalSpeed; // запомнили значение скорости не при беге
         }
@@ -63,7 +78,7 @@ namespace DarkestMaze
             _transfVert = Input.GetAxis("Vertical") * _speed * Time.deltaTime; // получаем значения для перемещения
             _transfHoriz = Input.GetAxis("Horizontal") * _speed * Time.deltaTime;
 
-            transform.Translate(_transfHoriz, 0, _transfVert); // перемещаем игрока
+            _player.transform.Translate(_transfHoriz, 0, _transfVert); // перемещаем игрока
 
 
             _rotation = new Vector2(Input.GetAxisRaw("Mouse X"),
@@ -73,11 +88,8 @@ namespace DarkestMaze
 
             _plCamera.transform.localRotation =
                 Quaternion.AngleAxis(_mouseLook.y, Vector3.left); // поворачиваем камеру вниз и вверх
-            transform.localRotation =
-                Quaternion.AngleAxis(_mouseLook.x, transform.up); // поворачиваем самого игрока влево и вправо
-
-            if (Input.GetKeyDown("escape"))
-                Cursor.lockState = CursorLockMode.None; // курсор больше не закреплен
+            _player.transform.localRotation =
+                Quaternion.AngleAxis(_mouseLook.x, _player.transform.up); // поворачиваем самого игрока влево и вправо
         }
 
         private void Angle(Vector2 rotation)
@@ -89,6 +101,21 @@ namespace DarkestMaze
             _mouseLook += _vector;
 
             Mathf.Clamp(_mouseLook.y, -PlayerConfig.MaxRotationAngle, PlayerConfig.MaxRotationAngle);
+        }
+
+        public void OnNotification(Notification notification, GameObject target, params object[] data)
+        {
+            switch (notification)
+            {
+                case Notification.ResumePlay:
+                    CursorLock = CursorLockMode.Locked;
+                    break;
+
+                case Notification.PausePlay:
+                    CursorLock = CursorLock == CursorLockMode.Locked ?
+                        CursorLockMode.None : CursorLockMode.Locked;
+                    break;
+            }
         }
     }
 }

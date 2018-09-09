@@ -1,68 +1,131 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using DarkestMaze.Interfaces;
+using DarkestMaze.Services;
+using DarkestMaze.UI;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using ISubscribe = DarkestMaze.Interfaces.ISubscribe;
 
 namespace DarkestMaze
 {
     /// <summary>
     /// Ядро программы. Основной класс в игре
     /// </summary>
-    public class Core : MonoBehaviour
+    public class Core : Singleton<Core>, ISubscribe
     {
-        /// <summary>
-        /// Единственный экземпляр класса
-        /// </summary>
-        public static Core Instance;
         /// <summary>
         /// Генератор лабиринта
         /// </summary>
         private Generator _maze;
 
         /// <summary>
-        /// Номер активной в данный момент сцены
-        /// </summary>
-        public int ActiveSceneNumber { get; private set; }
-        /* 0 - меню 
-         * 1 - игра
-         * 2 - рейтинг игроков
-         * 3 - конец игры
-         */
-        /// <summary>
         /// Флаг состояния активности игры
         /// </summary>
         public bool GameInProgress { get; private set; }
-        /// <summary>
-        /// Скриптуемый объект класса настроек игры
-        /// </summary>
-        public GameConfig GameConfig { get; private set; }
 
         /// <summary>
-        /// Загрузка сцены
+        /// Уровень сложности игры
         /// </summary>
-        /// <param name="sceneIndex">Номер сцены в билде</param>
-        public void LoadScene(int sceneIndex)
-        {
-            SceneManager.LoadScene(sceneIndex);
-            ActiveSceneNumber = sceneIndex;
-        }
+        public DifficultyLevel DifficultyLevel { get; private set; }
+
+        /// <summary>
+        /// Список подписчиков уведомлений
+        /// </summary>
+        public List<ISubscribe> Subscribers { get; private set; }
+
+        public UiController UiController { get; private set; }
+        public InputController InputController { get; private set; }
+        public TimeController TimeController { get; private set; }
+        public PlayerController PlayerController { get; private set; }
 
         private void Awake()
         {
-            DontDestroyOnLoad(gameObject);
-            if (Instance == null)
-            {
-                Instance = this;
-            }
-            else
-            {
-                Debug.LogWarning("Экземпляр класса-ядра уже существует!", gameObject);
-            }
+            GameInProgress = false;
+            DifficultyLevel = DifficultyLevel.Easy;
 
-            GameConfig = Config.Instance.GameConfig;
+            Subscribers = new List<ISubscribe> {Instance};
 
-            _maze = new Generator();
-            _maze.GenerateMaze();
+            UiController = gameObject.AddComponent<UiController>();
+            Subscribers.Add(UiController);
+            
+            TimeController = gameObject.AddComponent<TimeController>();
+            Subscribers.Add(TimeController);
+
+            InputController = gameObject.AddComponent<InputController>();
+            Subscribers.Add(InputController);
+
+            PlayerController = gameObject.AddComponent<PlayerController>();
+            Subscribers.Add(PlayerController);
+        }
+
+        private void NewGameStart()
+        {
+            //_maze = new Generator();
+            //_maze.GenerateMaze();
+
+            GameInProgress = true;
+        }
+
+        private void ResetScene()
+        {
+            //Логика дегенерации сцены и рестарта игры
+        }
+
+        private void ResumePlay()
+        {
+            GameInProgress = !GameInProgress;
+        }
+
+        private void Exit()
+        {
+#if UNITY_EDITOR
+            EditorApplication.isPlaying = false;
+#else
+		        Application.Quit();
+#endif
+        }
+
+        /// <summary>
+        /// Отправка уведомления подписчикам
+        /// </summary>
+        /// <param name="notification">Вид уведомления</param>
+        /// <param name="target">Объект, вызывающий уведомление</param>
+        /// <param name="data">Дополнительные параметры уведомления</param>
+        public void Notify(Notification notification, GameObject target, params object[] data)
+        {
+            foreach (var subscriber in Subscribers)
+            {
+                subscriber.OnNotification(notification, target, data);
+            }
+        }
+
+        public void OnNotification(Notification notification, GameObject target, params object[] data)
+        {
+            switch (notification)
+            {
+                case Notification.PausePlay:
+                case Notification.ResumePlay:
+                    ResumePlay();
+                    break;
+
+                case Notification.NewGame:
+                    ResetScene();
+                    NewGameStart();
+                    break;
+
+                case Notification.Exit:
+                    Exit();
+                    break;
+
+                case Notification.ChangeGameDifficulty:
+                    var index = Convert.ToInt32(data.FirstOrDefault());
+                    DifficultyLevel = Config.Instance.DifficultyLevels[index];
+                    break;
+            }
         }
     }
 }
