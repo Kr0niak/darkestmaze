@@ -18,8 +18,6 @@ namespace DarkestMaze
             set { Cursor.lockState = value; }
         }
 
-        private GameObject _player;
-
         /// <summary>
         /// Настройки игрока
         /// </summary>
@@ -56,26 +54,36 @@ namespace DarkestMaze
         /// <summary>
         /// Игрок
         /// </summary>
-        private Player player;
+        private Player _player;
 
-        void Start()
+        private void Start()
         {
             PlayerConfig = Config.Instance.PlayerConfig;
 
-            _player = GameObject.FindGameObjectWithTag("Player");
-
             CursorLock = CursorLockMode.Locked; // закрепляем курсор
+
+            //Сначала нужно создать игрока
+            var playerGameObject = GameObject.FindGameObjectWithTag("Player");
+            if (playerGameObject==null)
+            {
+                return;
+            }
+            _player = playerGameObject.GetComponentInChildren<Player>();
+
             _plCamera = _player.GetComponentInChildren<Camera>(); // находим камеру
 
             _speed = PlayerConfig.NormalSpeed; // запомнили значение скорости не при беге
-
-            player = GetComponentInChildren<Player>();
         }
 
 
-        void Update()
+        private void Update()
         {
-            player.UpdatePlayer(Time.deltaTime);
+            if (_player == null)
+            {
+                return;
+            }
+
+            _player.UpdatePlayer(Time.deltaTime);
             
             if (Input.GetKey(KeyCode.LeftShift)) // если нажали shift увеличиваем скорость
                 _speed = PlayerConfig.AccelerationSpeed;

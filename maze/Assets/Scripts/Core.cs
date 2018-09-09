@@ -57,9 +57,6 @@ namespace DarkestMaze
 
             InputController = gameObject.AddComponent<InputController>();
             Subscribers.Add(InputController);
-
-            PlayerController = gameObject.AddComponent<PlayerController>();
-            Subscribers.Add(PlayerController);
         }
 
         private void NewGameStart()
@@ -67,12 +64,18 @@ namespace DarkestMaze
             //_maze = new Generator();
             //_maze.GenerateMaze();
 
+            PlayerController = gameObject.AddComponent<PlayerController>();
+            Subscribers.Add(PlayerController);
+
             GameInProgress = true;
         }
 
         private void ResetScene()
         {
             //Логика дегенерации сцены и рестарта игры
+
+            Subscribers.Remove(PlayerController);
+            Destroy(PlayerController);
         }
 
         private void ResumePlay()
@@ -97,8 +100,9 @@ namespace DarkestMaze
         /// <param name="data">Дополнительные параметры уведомления</param>
         public void Notify(Notification notification, GameObject target, params object[] data)
         {
-            foreach (var subscriber in Subscribers)
+            for (var i = 0; i < Subscribers.Count; i++)
             {
+                var subscriber = Subscribers[i];
                 subscriber.OnNotification(notification, target, data);
             }
         }
@@ -112,7 +116,6 @@ namespace DarkestMaze
                     ResumePlay();
                     break;
 
-<<<<<<< HEAD
                 case Notification.NewGame:
                     ResetScene();
                     NewGameStart();
@@ -127,12 +130,6 @@ namespace DarkestMaze
                     DifficultyLevel = Config.Instance.DifficultyLevels[index];
                     break;
             }
-=======
-           // GameConfig = Config.Instance.GameConfig;
-
-            _maze = new Generator(4,4,4);
-            _maze.GenerateMaze();
->>>>>>> GeneratorRefactoring
         }
     }
 }
