@@ -53,6 +53,10 @@ namespace DarkestMaze
         /// Камера игрока от первого лица
         /// </summary>
         private Camera _plCamera;
+        /// <summary>
+        /// Игрок
+        /// </summary>
+        private Player player;
 
         void Start()
         {
@@ -64,11 +68,15 @@ namespace DarkestMaze
             _plCamera = _player.GetComponentInChildren<Camera>(); // находим камеру
 
             _speed = PlayerConfig.NormalSpeed; // запомнили значение скорости не при беге
+
+            player = GetComponentInChildren<Player>();
         }
 
 
         void Update()
         {
+            player.UpdatePlayer(Time.deltaTime);
+            
             if (Input.GetKey(KeyCode.LeftShift)) // если нажали shift увеличиваем скорость
                 _speed = PlayerConfig.AccelerationSpeed;
             else

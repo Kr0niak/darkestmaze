@@ -1,90 +1,113 @@
 ﻿using DarkestMaze;
 using UnityEngine;
 
-//генератор лабиринта компонент
+/// <summary>
+/// Генератор лабиринта компонент
+/// </summary>
+public class Generator
+{
 
-public class Generator : MonoBehaviour {
+    private readonly int _num;
+    private readonly int _height;
+    private readonly int _width;
 
-    public int num = 1;//номер лабиринта
-    public int height = 4,width = 4; //ширина высота
-    private GameObject maze; //дочерний объект
-    private Room[,] rooms = new Room[4,4];//комнаты лабиринта
+    private Transform _rootMaze;
+    private readonly Room[,] _rooms = new Room[4, 4];
 
-    public void GenerateMaze() //Генерация лабиринта
+    public Generator(int height, int width, int num)
     {
-        maze = new GameObject();
-        for (int i = 0; i <= height - 1; i++)
+        _height = height;
+        _width = width;
+        _num = num;
+    }
+
+    /// <summary>
+    /// Генерация лабиринта
+    /// </summary>
+    public void GenerateMaze()
+    {
+        _rootMaze = new GameObject("RootMaze").transform;
+        for (var i = 0; i <= _height - 1; i++)
         {
-            for (int j = 0; j <= width - 1; j++)
+            for (var j = 0; j <= _width - 1; j++)
             {
-                float fX = i * height; 
-                float fZ = j * width; 
+                float fX = i * _height;
+                float fZ = j * _width;
 
-                rooms[i, j] = new Room(Config.Instance.RoomConfig);
-                rooms[i, j].X = fX;
-                rooms[i, j].Y = 0.0f;
-                rooms[i, j].Z = fZ;
-                rooms[i, j].num = Random.Range(1, 10); 
-
-                //генерируем разные комнаты
-                if (rooms[i, j].num >= 1 && rooms[i, j].num <= 4)
+                _rooms[i, j] = new Room()
                 {
-                    rooms[i, j].Prefab = "Floor_A";
-                }
-                else if(rooms[i, j].num >=5 && rooms[i, j].num <= 9)
+                    X = fX,
+                    Y = 0.0f,
+                    Z = fZ,
+                    num = Random.Range(1, 10)
+                };
+
+
+
+                #region генерируем разные комнаты
+
+                if (_rooms[i, j].num >= 1 && _rooms[i, j].num <= 4)
                 {
-                    rooms[i, j].Prefab = "Floor_B";
+                    _rooms[i, j].Prefab = "Floor_A";
+                }
+                else if (_rooms[i, j].num >= 5 && _rooms[i, j].num <= 9)
+                {
+                    _rooms[i, j].Prefab = "Floor_B";
                 }
 
-                //пол
-                GameObject maze = objectLabirint(rooms[i, j].Prefab, rooms[i, j].X, rooms[i, j].Y, rooms[i, j].Z, 0);
+                #endregion
 
-                //генерируем стены
+
+                #region генерируем пол
+
+                ObjectLabirint(_rooms[i, j].Prefab, new Vector3(_rooms[i, j].X, _rooms[i, j].Y, _rooms[i, j].Z), 0);
+
+                #endregion
+
+
+                #region генерируем стены
+
                 if (i == 0)
                 {
-                    GameObject wallI = objectLabirint("Wall_C", rooms[i, j].X - (0.68f * 2) - 0.4f, 0.0f, rooms[i, j].Z,0);  
+                    ObjectLabirint("Wall_C", new Vector3(_rooms[i, j].X - (0.68f * 2) - 0.4f, 0.0f, _rooms[i, j].Z), 0);
                 }
 
-                if (i == width - 1)
+                if (i == _width - 1)
                 {
-                    GameObject wallI = objectLabirint("Wall_C", rooms[i, j].X + (0.68f * 2) + 0.4f, 0.0f, rooms[i, j].Z, 0);
+                    ObjectLabirint("Wall_C", new Vector3(_rooms[i, j].X + (0.68f * 2) + 0.4f, 0.0f, _rooms[i, j].Z), 0);
                 }
 
                 if (j == 0)
                 {
-                    GameObject wallJ= objectLabirint("Wall_C", rooms[i, j].X, 0.0f, rooms[i, j].Z - (0.68f * 2) - 0.4f, 90);
+                    ObjectLabirint("Wall_C", new Vector3(_rooms[i, j].X, 0.0f, _rooms[i, j].Z - (0.68f * 2) - 0.4f), 90);
                 }
 
-                if (j == height - 1)
+                if (j == _height - 1)
                 {
-                    GameObject wallJ = objectLabirint("Wall_C", rooms[i, j].X, 0.0f, rooms[i, j].Z + (0.68f * 2) + 0.4f, 90);
+                    ObjectLabirint("Wall_C", new Vector3(_rooms[i, j].X, 0.0f, _rooms[i, j].Z + (0.68f * 2) + 0.4f), 90);
                 }
 
-                
-                if (i > 0 || i < width - 1 || j == 0)
+
+                if (i > 0 || i < _width - 1 || j == 0)
                 {
-                    GameObject wallV = objectLabirint("Doorway_C", rooms[i, j].X - (0.68f * 2) - 0.4f, 0.0f, rooms[i, j].Z, 0);
+                    ObjectLabirint("Doorway_C", new Vector3(_rooms[i, j].X - (0.68f * 2) - 0.4f, 0.0f, _rooms[i, j].Z), 0);
                 }
 
-                if (j > 0 || j < height - 1 || i == 0)
+                if (j > 0 || j < _height - 1 || i == 0)
                 {
-                    GameObject wallV = objectLabirint("Doorway_C", rooms[i, j].X, 0.0f, rooms[i, j].Z - (0.68f * 2) - 0.4f, 90);
+                    ObjectLabirint("Doorway_C", new Vector3(_rooms[i, j].X, 0.0f, _rooms[i, j].Z - (0.68f * 2) - 0.4f), 90);
                 }
+
+                #endregion
 
 
             }
         }
     }
-    private GameObject objectLabirint(string prefab = "",
-                            float x = 0.0f,
-                            float y = 0.0f,
-                            float z = 0.0f,
-                            int rotate = 0
-                            )
-    { 
-        return Instantiate(Resources.Load(prefab), new Vector3(x, y, z), Quaternion.Euler(0, rotate, 0)) as GameObject;
+
+    private void ObjectLabirint(string prefab = "", Vector3 pos = default(Vector3), int rotate = 0)
+    {
+        GameObject.Instantiate(Resources.Load(prefab), new Vector3(pos.x, pos.y, pos.z), Quaternion.Euler(0, rotate, 0), _rootMaze);
+
     }
-
-
-
 }

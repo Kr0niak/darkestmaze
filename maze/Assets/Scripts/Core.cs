@@ -112,6 +112,7 @@ namespace DarkestMaze
                     ResumePlay();
                     break;
 
+<<<<<<< HEAD
                 case Notification.NewGame:
                     ResetScene();
                     NewGameStart();
@@ -126,6 +127,12 @@ namespace DarkestMaze
                     DifficultyLevel = Config.Instance.DifficultyLevels[index];
                     break;
             }
+=======
+           // GameConfig = Config.Instance.GameConfig;
+
+            _maze = new Generator(4,4,4);
+            _maze.GenerateMaze();
+>>>>>>> GeneratorRefactoring
         }
     }
 }

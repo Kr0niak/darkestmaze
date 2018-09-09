@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿
 namespace DarkestMaze
 {
     /// <summary>
@@ -13,5 +10,14 @@ namespace DarkestMaze
         /// Ёмкость заряда батарейки
         /// </summary>
         public readonly float Charge = 10.0f;
+
+        
+        public void AddEnergy(FlashLight flashLight)
+        {
+            flashLight.WorkTime -= Charge;
+
+            if (flashLight.WorkTime < 0)
+                flashLight.WorkTime = 0;
+        }
     }
 }

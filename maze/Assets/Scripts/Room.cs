@@ -21,10 +21,10 @@ namespace DarkestMaze
         /// </summary>
         public readonly List<Item> items = new List<Item>();
 
-        public Room(RoomConfig roomConfig)
+        /*public Room(RoomConfig roomConfig)
         {
             RoomConfig = roomConfig;
-        }
+        }*/
 
         /// <summary>
         /// Попытка добавления предмета в комнату
